@@ -1,12 +1,14 @@
 package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Map;
 import java.util.Optional;
 
+@Slf4j
 @Repository
 @RequiredArgsConstructor
 public class InMemoryUserRepository implements UserRepository {
@@ -18,6 +20,7 @@ public class InMemoryUserRepository implements UserRepository {
         Integer userId = generateId();
         user.setId(userId);
         userMap.put(userId, user);
+        log.info("Пользователь сохранен в память");
         return user;
     }
 
@@ -34,16 +37,19 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public void deleteUser(Integer id) {
         userMap.remove(id);
+        log.info("Пользователь удален из памяти");
     }
 
     @Override
     public boolean isEmailUnique(String email) {
+        log.info("Проводится поиск дубликатов email: {}", email);
         return userMap.values().stream()
                 .filter(user -> user.getEmail().equals(email))
                 .findFirst().isEmpty();
     }
 
     private Integer generateId() {
+        log.info("Сгенерирован новый id={}", id);
         return id++;
     }
 }
