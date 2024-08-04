@@ -2,11 +2,9 @@ package ru.practicum.shareit.user;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.NewUserRequest;
+import ru.practicum.shareit.user.dto.UpdateUserRequest;
 import ru.practicum.shareit.user.dto.UserDto;
 
 @RestController
@@ -18,5 +16,15 @@ public class UserController {
     @PostMapping
     public UserDto createUser(@Valid @RequestBody NewUserRequest request) {
         return userService.createUser(request);
+    }
+
+    @PatchMapping("/{id}")
+    public UserDto updateUser(@PathVariable Integer id, @RequestBody UpdateUserRequest request) {
+        return userService.updateUser(id, request);
+    }
+
+    @GetMapping("/{id}")
+    public UserDto findUserById(@PathVariable Integer id) {
+        return userService.findUserById(id);
     }
 }

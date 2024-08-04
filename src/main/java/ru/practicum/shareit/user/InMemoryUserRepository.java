@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -18,6 +19,16 @@ public class InMemoryUserRepository implements UserRepository {
         user.setId(userId);
         userMap.put(userId, user);
         return user;
+    }
+
+    @Override
+    public Optional<User> findUserById(Integer id) {
+        return Optional.of(userMap.get(id));
+    }
+
+    @Override
+    public User updateUser(Integer id, User user) {
+        return userMap.put(id, user);
     }
 
     @Override
