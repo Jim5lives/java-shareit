@@ -43,6 +43,13 @@ public class UserServiceImpl implements UserService {
         return UserMapper.mapToUserDto(user);
     }
 
+    @Override
+    public void deleteUser(Integer id) {
+        User userToDelete = userRepository.findUserById(id)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + id));
+        userRepository.deleteUser(userToDelete.getId());
+    }
+
     private void isEmailUnique(String email) {
         if (!userRepository.isEmailUnique(email)) {
             throw new DuplicatedDataException("Пользователь с таким email уже зарегистрирован");

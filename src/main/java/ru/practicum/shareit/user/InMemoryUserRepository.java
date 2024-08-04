@@ -32,6 +32,11 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
+    public void deleteUser(Integer id) {
+        userMap.remove(id);
+    }
+
+    @Override
     public boolean isEmailUnique(String email) {
         return userMap.values().stream()
                 .filter(user -> user.getEmail().equals(email))
