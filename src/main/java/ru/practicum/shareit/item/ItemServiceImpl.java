@@ -69,6 +69,16 @@ public class ItemServiceImpl implements ItemService {
                 .toList();
     }
 
+    @Override
+    public List<ItemDto> search(String query) {
+        if (query.isBlank()) {
+            return List.of();
+        }
+        return itemRepository.search(query).stream()
+                .map(ItemMapper::mapToItemDto)
+                .toList();
+    }
+
     private boolean isOwnerValid(Integer userId, Integer itemId) {
         User owner = userRepository.findUserById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));

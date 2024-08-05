@@ -43,4 +43,9 @@ public class ItemController {
     public List<ItemDto> getAllUsersItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         return itemService.getAllUsersItems(userId);
     }
+
+    @GetMapping("/search")
+    public List<ItemDto> search(@RequestParam String text) {
+        return itemService.search(text);
+    }
 }

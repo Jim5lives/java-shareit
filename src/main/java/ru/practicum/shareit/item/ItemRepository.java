@@ -12,4 +12,5 @@ public interface ItemRepository {
     Item updateItem(Integer id, Item item);
     void deleteItem(Integer id);
     List<Item> getAllUsersItems(Integer userId);
+    List<Item> search(String query);
 }

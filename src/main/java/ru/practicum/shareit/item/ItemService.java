@@ -13,4 +13,5 @@ public interface ItemService {
     ItemDto updateItem(Integer userId, Integer itemId, UpdateItemRequest request);
     void deleteItem(Integer userId, Integer itemId);
     List<ItemDto> getAllUsersItems(Integer userId);
+    List<ItemDto> search(String query);
 }

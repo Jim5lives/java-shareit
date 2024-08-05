@@ -46,6 +46,15 @@ public class InMemoryItemRepository implements ItemRepository {
                 .toList();
     }
 
+    @Override
+    public List<Item> search(String query) {
+        return itemMap.values().stream()
+                .filter(Item::getAvailable)
+                .filter(item -> item.getName().toLowerCase().contains(query.toLowerCase()) ||
+                        item.getDescription().toLowerCase().contains(query.toLowerCase()))
+                .toList();
+    }
+
     private Integer generateId() {
         log.info("Присвоен новый itemId={}", id);
         return id++;
