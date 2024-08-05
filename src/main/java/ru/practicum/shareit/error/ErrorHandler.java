@@ -3,11 +3,14 @@ package ru.practicum.shareit.error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import ru.practicum.shareit.error.exceptions.DuplicatedDataException;
 import ru.practicum.shareit.error.exceptions.NotFoundException;
+
+import java.util.List;
 
 @Slf4j
 @RestControllerAdvice
@@ -23,9 +26,22 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
-        log.debug("Получен статус 400 Bad Request (неверные параметры запроса) {}", e.getMessage());
-        return new ErrorResponse("Неверные параметры запроса");
+        List<String> errors = e.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .map(error -> String.format("Поле '%s': %s", error.getField(), error.getDefaultMessage()))
+                .toList();
+        log.debug("Получен статус 400 Bad Request (неверные параметры запроса): {}", errors);
+        return new ErrorResponse("Неверные параметры запроса", errors);
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleMissingRequestHeader(MissingRequestHeaderException e) {
+        log.debug("Получен статус 400 Bad Request (отсутствует заголовок запроса");
+        return new ErrorResponse("Отсутствует обязательный заголовок запроса: " + e.getHeaderName());
+    }
+
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)

@@ -49,7 +49,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     private Integer generateId() {
-        log.info("Сгенерирован новый userId={}", id);
+        log.info("Присвоен новый userId={}", id);
         return id++;
     }
 }

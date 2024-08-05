@@ -23,7 +23,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     private Integer generateId() {
-        log.info("Сгенерирован новый itemId={}", id);
+        log.info("Присвоен новый itemId={}", id);
         return id++;
     }
 }
