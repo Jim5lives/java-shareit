@@ -9,13 +9,12 @@ import ru.practicum.shareit.request.model.ItemRequest;
 @Data
 @Validated
 public class NewItemRequest {
-    @NotBlank @NotNull
+    @NotNull @NotBlank
     private String name;
-    @NotBlank @NotNull
+    @NotNull @NotBlank
     private String description;
     @NotNull
-    private boolean isAvailable;
-    @NotNull
+    private Boolean available;
     private Integer ownerId;
     private ItemRequest request;
 }

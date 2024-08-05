@@ -24,7 +24,7 @@ public class ErrorHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         log.debug("Получен статус 400 Bad Request (неверные параметры запроса) {}", e.getMessage());
-        return new ErrorResponse(e.getMessage());
+        return new ErrorResponse("Неверные параметры запроса");
     }
 
     @ExceptionHandler

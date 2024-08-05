@@ -26,7 +26,7 @@ public class InMemoryUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findUserById(Integer id) {
-        return Optional.of(userMap.get(id));
+        return Optional.ofNullable(userMap.get(id));
     }
 
     @Override
@@ -49,7 +49,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     private Integer generateId() {
-        log.info("Сгенерирован новый id={}", id);
+        log.info("Сгенерирован новый userId={}", id);
         return id++;
     }
 }
