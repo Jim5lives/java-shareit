@@ -21,6 +21,7 @@ public class InMemoryItemRepository implements ItemRepository {
         Integer itemId = generateId();
         item.setId(itemId);
         itemMap.put(itemId, item);
+        log.trace("Вещь сохранена в память");
         return item;
     }
 
@@ -37,6 +38,7 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public void deleteItem(Integer id) {
         itemMap.remove(id);
+        log.trace("Вещь удалена из памяти");
     }
 
     @Override
@@ -56,7 +58,7 @@ public class InMemoryItemRepository implements ItemRepository {
     }
 
     private Integer generateId() {
-        log.info("Присвоен новый itemId={}", id);
+        log.trace("Присвоен новый itemId={}", id);
         return id++;
     }
 }

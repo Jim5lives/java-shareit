@@ -20,7 +20,7 @@ public class InMemoryUserRepository implements UserRepository {
         Integer userId = generateId();
         user.setId(userId);
         userMap.put(userId, user);
-        log.info("Пользователь сохранен в память");
+        log.trace("Пользователь сохранен в память");
         return user;
     }
 
@@ -37,7 +37,7 @@ public class InMemoryUserRepository implements UserRepository {
     @Override
     public void deleteUser(Integer id) {
         userMap.remove(id);
-        log.info("Пользователь удален из памяти");
+        log.trace("Пользователь удален из памяти");
     }
 
     @Override
@@ -49,7 +49,7 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     private Integer generateId() {
-        log.info("Присвоен новый userId={}", id);
+        log.trace("Присвоен новый userId={}", id);
         return id++;
     }
 }

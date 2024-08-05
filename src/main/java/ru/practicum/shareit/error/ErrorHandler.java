@@ -43,7 +43,6 @@ public class ErrorHandler {
         return new ErrorResponse("Отсутствует обязательный заголовок запроса: " + e.getHeaderName());
     }
 
-
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorResponse handleDuplicatedData(DuplicatedDataException e) {
