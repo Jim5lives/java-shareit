@@ -28,6 +28,11 @@ public class InMemoryItemRepository implements ItemRepository {
         return Optional.ofNullable(itemMap.get(id));
     }
 
+    @Override
+    public Item updateItem(Integer itemId, Item item) {
+        return itemMap.put(itemId, item);
+    }
+
     private Integer generateId() {
         log.info("Присвоен новый itemId={}", id);
         return id++;
