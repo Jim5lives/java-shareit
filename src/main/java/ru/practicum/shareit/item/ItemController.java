@@ -17,4 +17,9 @@ public class ItemController {
                               @Valid @RequestBody NewItemRequest request) {
         return itemService.createItem(userId, request);
     }
+
+    @GetMapping("/{id}")
+    public ItemDto findItemById(@PathVariable Integer id) {
+        return itemService.findItemById(id);
+    }
 }

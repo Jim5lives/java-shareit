@@ -24,4 +24,11 @@ public class ItemServiceImpl implements ItemService {
         item = itemRepository.createItem(item);
         return ItemMapper.mapToItemDto(item);
     }
+
+    @Override
+    public ItemDto findItemById(Integer id) {
+        Item item = itemRepository.findItemById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + id));
+        return ItemMapper.mapToItemDto(item);
+    }
 }

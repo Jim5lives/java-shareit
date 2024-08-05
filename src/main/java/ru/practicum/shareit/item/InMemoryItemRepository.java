@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -20,6 +21,11 @@ public class InMemoryItemRepository implements ItemRepository {
         item.setId(itemId);
         itemMap.put(itemId, item);
         return item;
+    }
+
+    @Override
+    public Optional<Item> findItemById(Integer id) {
+        return Optional.ofNullable(itemMap.get(id));
     }
 
     private Integer generateId() {

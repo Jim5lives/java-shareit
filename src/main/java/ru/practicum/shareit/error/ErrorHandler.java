@@ -25,14 +25,14 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+    public ErrorResponseDetailed handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         List<String> errors = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
                 .map(error -> String.format("Поле '%s': %s", error.getField(), error.getDefaultMessage()))
                 .toList();
         log.debug("Получен статус 400 Bad Request (неверные параметры запроса): {}", errors);
-        return new ErrorResponse("Неверные параметры запроса", errors);
+        return new ErrorResponseDetailed("Неверные параметры запроса", errors);
     }
 
     @ExceptionHandler
