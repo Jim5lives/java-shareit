@@ -27,6 +27,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
         Item item = ItemMapper.mapToItem(request);
         item.setOwnerId(owner.getId());
+
         item = itemRepository.createItem(item);
         log.info("Вещь успешно создана: {}", item);
         return ItemMapper.mapToItemDto(item);
@@ -63,6 +64,7 @@ public class ItemServiceImpl implements ItemService {
         if (isOwnerValid(userId, itemId)) {
             log.trace("Валидация успешна userId={} и itemId={} совпадают", userId, itemId);
             itemRepository.deleteItem(itemId);
+
         } else {
             log.warn("Не совпадают userId={} и ownerId={} вещи для удаления", userId, itemId);
             throw new AccessForbiddenException("Нет прав для удаления вещи у пользователя с id=" + userId);
@@ -73,6 +75,7 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> getAllUsersItems(Integer userId) {
         User owner = userRepository.findUserById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
+
         log.info("Выводится список вещей пользователя с id={}", userId);
         return itemRepository.getAllUsersItems(owner.getId()).stream()
                 .map(ItemMapper::mapToItemDto)
@@ -85,6 +88,7 @@ public class ItemServiceImpl implements ItemService {
             log.info("Передана пустая строка для поиска");
             return List.of();
         }
+
         log.info("Выводится список вещей, содержащих '{}'", query);
         return itemRepository.search(query).stream()
                 .map(ItemMapper::mapToItemDto)
@@ -96,6 +100,7 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
         Item item = itemRepository.findItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + itemId));
+
         return item.getOwnerId().equals(owner.getId());
     }
 }

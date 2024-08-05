@@ -44,6 +44,7 @@ public class UserServiceImpl implements UserService {
     public UserDto findUserById(Integer id) {
         User user = userRepository.findUserById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + id));
+
         log.info("Пользователь с id={} успешно найден: {}", id, user);
         return UserMapper.mapToUserDto(user);
     }
@@ -52,6 +53,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Integer id) {
         User userToDelete = userRepository.findUserById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + id));
+
         userRepository.deleteUser(userToDelete.getId());
         log.info("Пользователь с id={} успешно удален: {}", id, userToDelete);
     }

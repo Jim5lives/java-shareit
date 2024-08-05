@@ -26,7 +26,7 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponseDetailed handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
+    public ErrorResponseDetailed handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
         List<String> errors = e.getBindingResult()
                 .getFieldErrors()
                 .stream()
@@ -38,21 +38,21 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMissingRequestHeader(MissingRequestHeaderException e) {
+    public ErrorResponse handleMissingRequestHeader(final MissingRequestHeaderException e) {
         log.debug("Получен статус 400 Bad Request (отсутствует заголовок запроса");
         return new ErrorResponse("Отсутствует обязательный заголовок запроса: " + e.getHeaderName());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDuplicatedData(DuplicatedDataException e) {
+    public ErrorResponse handleDuplicatedData(final DuplicatedDataException e) {
         log.debug("Получен статус 409 Conflict {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.FORBIDDEN)
-    public ErrorResponse handleAccessForbidden(AccessForbiddenException e) {
+    public ErrorResponse handleAccessForbidden(final AccessForbiddenException e) {
         log.debug("Получен статус 403 Forbidden {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
