@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -36,6 +37,13 @@ public class InMemoryItemRepository implements ItemRepository {
     @Override
     public void deleteItem(Integer id) {
         itemMap.remove(id);
+    }
+
+    @Override
+    public List<Item> getAllUsersItems(Integer userId) {
+        return itemMap.values().stream()
+                .filter(item -> item.getOwnerId().equals(userId))
+                .toList();
     }
 
     private Integer generateId() {

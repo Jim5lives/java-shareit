@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
@@ -56,6 +58,15 @@ public class ItemServiceImpl implements ItemService {
         } else {
             throw new AccessForbiddenException("Нет прав для удаления вещи у пользователя с id=" + userId);
         }
+    }
+
+    @Override
+    public List<ItemDto> getAllUsersItems(Integer userId) {
+        User owner = userRepository.findUserById(userId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
+        return itemRepository.getAllUsersItems(owner.getId()).stream()
+                .map(ItemMapper::mapToItemDto)
+                .toList();
     }
 
     private boolean isOwnerValid(Integer userId, Integer itemId) {

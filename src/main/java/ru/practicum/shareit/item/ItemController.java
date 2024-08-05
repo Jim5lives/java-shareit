@@ -7,6 +7,8 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.dto.UpdateItemRequest;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/items")
 @RequiredArgsConstructor
@@ -35,5 +37,10 @@ public class ItemController {
     public void deleteItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
                            @PathVariable Integer itemId) {
         itemService.deleteItem(userId, itemId);
+    }
+
+    @GetMapping
+    public List<ItemDto> getAllUsersItems(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return itemService.getAllUsersItems(userId);
     }
 }
