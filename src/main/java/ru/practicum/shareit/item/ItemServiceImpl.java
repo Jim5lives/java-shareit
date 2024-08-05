@@ -36,13 +36,10 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto updateItem(Integer userId, Integer itemId, UpdateItemRequest request) {
-        User owner = userRepository.findUserById(userId)
-                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
         Item item = itemRepository.findItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + itemId));
 
-        if (item.getOwnerId().equals(owner.getId())) {
-
+        if (isOwnerValid(userId, itemId)) {
             Item itemToUpdate = ItemMapper.updateItemFields(item, request);
             Item updatedItem = itemRepository.updateItem(itemId, itemToUpdate);
             return ItemMapper.mapToItemDto(updatedItem);
@@ -52,4 +49,20 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
+    @Override
+    public void deleteItem(Integer userId, Integer itemId) {
+        if (isOwnerValid(userId, itemId)) {
+            itemRepository.deleteItem(itemId);
+        } else {
+            throw new AccessForbiddenException("Нет прав для удаления вещи у пользователя с id=" + userId);
+        }
+    }
+
+    private boolean isOwnerValid(Integer userId, Integer itemId) {
+        User owner = userRepository.findUserById(userId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
+        Item item = itemRepository.findItemById(itemId)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + itemId));
+        return item.getOwnerId().equals(owner.getId());
+    }
 }

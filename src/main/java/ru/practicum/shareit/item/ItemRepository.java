@@ -8,5 +8,6 @@ public interface ItemRepository {
 
     Item createItem(Item item);
     Optional<Item> findItemById(Integer id);
-    Item updateItem(Integer itemId, Item item);
+    Item updateItem(Integer id, Item item);
+    void deleteItem(Integer id);
 }

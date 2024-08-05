@@ -30,4 +30,10 @@ public class ItemController {
                               @RequestBody UpdateItemRequest request) {
         return itemService.updateItem(userId, itemId, request);
     }
+
+    @DeleteMapping("/{itemId}")
+    public void deleteItem(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                           @PathVariable Integer itemId) {
+        itemService.deleteItem(userId, itemId);
+    }
 }

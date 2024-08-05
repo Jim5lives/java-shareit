@@ -33,6 +33,11 @@ public class InMemoryItemRepository implements ItemRepository {
         return itemMap.put(itemId, item);
     }
 
+    @Override
+    public void deleteItem(Integer id) {
+        itemMap.remove(id);
+    }
+
     private Integer generateId() {
         log.info("Присвоен новый itemId={}", id);
         return id++;
