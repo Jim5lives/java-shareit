@@ -13,7 +13,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class InMemoryUserRepository implements UserRepository {
     private final Map<Integer, User> userMap;
-    private Integer id = 1;
+    private int id = 1;
 
     @Override
     public User createUser(User user) {

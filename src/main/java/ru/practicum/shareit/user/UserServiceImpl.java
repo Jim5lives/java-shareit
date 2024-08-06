@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user;
 
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
         if (request.hasEmail()) {
             isEmailUnique(request.getEmail());
         }
-        User userToUpdate = UserMapper.updateUserFields(user, request);
+        User userToUpdate = updateUserFields(user, request);
 
         User updatedUser = userRepository.updateUser(id, userToUpdate);
         log.info("Пользователь успешно обновлен {}", user);
@@ -63,5 +64,24 @@ public class UserServiceImpl implements UserService {
             log.warn("Ошибка: email {} уже используется", email);
             throw new DuplicatedDataException("Пользователь с таким email уже зарегистрирован");
         }
+    }
+
+    private User updateUserFields(User user, UpdateUserRequest request) {
+        if (request.hasName()) {
+            if (request.getName().isBlank()) {
+                log.warn("Передано пустое имя пользователя для обновления");
+                throw new ValidationException("Имя пользователя не может быть пустым");
+            }
+            user.setName(request.getName());
+        }
+
+        if (request.hasEmail()) {
+            if (request.getEmail().isBlank()) {
+                log.warn("Передан пустой email пользователя для обновления");
+                throw new ValidationException("Email не может быть пустым");
+            }
+            user.setEmail(request.getEmail());
+        }
+        return user;
     }
 }

@@ -1,5 +1,6 @@
 package ru.practicum.shareit.error;
 
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -41,6 +42,13 @@ public class ErrorHandler {
     public ErrorResponse handleMissingRequestHeader(final MissingRequestHeaderException e) {
         log.debug("Получен статус 400 Bad Request (отсутствует заголовок запроса");
         return new ErrorResponse("Отсутствует обязательный заголовок запроса: " + e.getHeaderName());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidation(final ValidationException e) {
+        log.debug("Получен статус 400 Bad Request {}", e.getMessage(), e);
+        return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler

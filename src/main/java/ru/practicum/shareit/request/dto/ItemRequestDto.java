@@ -8,8 +8,8 @@ import java.time.Instant;
 
 @Data
 public class ItemRequestDto {
-    Integer id;
-    String description;
-    User requestor;
-    Instant created;
+    private Integer id;
+    private String description;
+    private User requestor;
+    private Instant created;
 }

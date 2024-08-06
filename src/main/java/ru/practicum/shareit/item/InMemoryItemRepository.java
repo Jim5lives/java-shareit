@@ -14,7 +14,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class InMemoryItemRepository implements ItemRepository {
     private final Map<Integer, Item> itemMap;
-    private Integer id = 1;
+    private int id = 1;
 
     @Override
     public Item createItem(Item item) {

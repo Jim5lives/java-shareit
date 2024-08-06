@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.dto;
 
 import lombok.Data;
-import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 @Data
 public class ItemDto {
@@ -10,5 +10,5 @@ public class ItemDto {
     private String description;
     private Boolean available;
     private Integer ownerId;
-    private ItemRequest request;
+    private ItemRequestDto request;
 }

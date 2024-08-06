@@ -48,7 +48,7 @@ public class ItemServiceImpl implements ItemService {
 
         if (isOwnerValid(userId, itemId)) {
             log.trace("Валидация пройдена userId={} и itemId={} совпадают", userId, itemId);
-            Item itemToUpdate = ItemMapper.updateItemFields(item, request);
+            Item itemToUpdate = updateItemFields(item, request);
             Item updatedItem = itemRepository.updateItem(itemId, itemToUpdate);
             log.info("Вещь успешно обновлена: {}", updatedItem);
             return ItemMapper.mapToItemDto(updatedItem);
@@ -102,5 +102,18 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + itemId));
 
         return item.getOwnerId().equals(owner.getId());
+    }
+
+    private Item updateItemFields(Item item, UpdateItemRequest request) {
+        if (request.hasName()) {
+            item.setName(request.getName());
+        }
+        if (request.hasDescription()) {
+            item.setDescription(request.getDescription());
+        }
+        if (request.hasAvailable()) {
+            item.setAvailable(request.getAvailable());
+        }
+        return item;
     }
 }
