@@ -23,7 +23,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto createItem(Integer userId, NewItemRequest request) {
-        User owner = userRepository.findUserById(userId)
+        User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
         Item item = ItemMapper.mapToItem(request);
         item.setOwnerId(owner.getId());
@@ -73,7 +73,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getAllUsersItems(Integer userId) {
-        User owner = userRepository.findUserById(userId)
+        User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
 
         log.info("Выводится список вещей пользователя с id={}", userId);
@@ -96,7 +96,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private boolean isOwnerValid(Integer userId, Integer itemId) {
-        User owner = userRepository.findUserById(userId)
+        User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
         Item item = itemRepository.findItemById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + itemId));
