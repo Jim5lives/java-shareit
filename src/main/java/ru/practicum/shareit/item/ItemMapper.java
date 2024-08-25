@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.request.ItemRequestMapper;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
@@ -15,8 +14,8 @@ public class ItemMapper {
         item.setName(request.getName());
         item.setDescription(request.getDescription());
         item.setAvailable(request.getAvailable());
-        if (request.getRequest() != null) {
-            item.setRequest(ItemRequestMapper.mapToItemRequest(request.getRequest()));
+        if (request.getRequestId() != null) {
+            item.setRequestId(request.getRequestId());
         }
         return item;
     }
@@ -28,8 +27,8 @@ public class ItemMapper {
         dto.setDescription(item.getDescription());
         dto.setAvailable(item.getAvailable());
         dto.setOwnerId(item.getOwnerId());
-        if (item.getRequest() != null) {
-            dto.setRequest(ItemRequestMapper.mapToItemRequestDto(item.getRequest()));
+        if (item.getRequestId() != null) {
+            dto.setRequestId(item.getRequestId());
         }
         return dto;
     }

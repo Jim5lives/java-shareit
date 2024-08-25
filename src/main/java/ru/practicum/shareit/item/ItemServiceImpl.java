@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exceptions.AccessForbiddenException;
 import ru.practicum.shareit.error.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -22,34 +23,37 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
 
     @Override
+    @Transactional
     public ItemDto createItem(Integer userId, NewItemRequest request) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
         Item item = ItemMapper.mapToItem(request);
         item.setOwnerId(owner.getId());
 
-        item = itemRepository.createItem(item);
+        item = itemRepository.save(item);
         log.info("Вещь успешно создана: {}", item);
         return ItemMapper.mapToItemDto(item);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public ItemDto findItemById(Integer id) {
-        Item item = itemRepository.findItemById(id)
+        Item item = itemRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + id));
         log.info("Вещь найдена по id={}: {}", id, item);
         return ItemMapper.mapToItemDto(item);
     }
 
     @Override
+    @Transactional
     public ItemDto updateItem(Integer userId, Integer itemId, UpdateItemRequest request) {
-        Item item = itemRepository.findItemById(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + itemId));
 
         if (isOwnerValid(userId, itemId)) {
             log.trace("Валидация пройдена userId={} и itemId={} совпадают", userId, itemId);
             Item itemToUpdate = updateItemFields(item, request);
-            Item updatedItem = itemRepository.updateItem(itemId, itemToUpdate);
+            Item updatedItem = itemRepository.save(itemToUpdate);
             log.info("Вещь успешно обновлена: {}", updatedItem);
             return ItemMapper.mapToItemDto(updatedItem);
 
@@ -60,10 +64,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public void deleteItem(Integer userId, Integer itemId) {
         if (isOwnerValid(userId, itemId)) {
             log.trace("Валидация успешна userId={} и itemId={} совпадают", userId, itemId);
-            itemRepository.deleteItem(itemId);
+            itemRepository.deleteById(itemId);
 
         } else {
             log.warn("Не совпадают userId={} и ownerId={} вещи для удаления", userId, itemId);
@@ -72,17 +77,19 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> getAllUsersItems(Integer userId) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
 
         log.info("Выводится список вещей пользователя с id={}", userId);
-        return itemRepository.getAllUsersItems(owner.getId()).stream()
+        return itemRepository.findAllByOwnerId(owner.getId()).stream()
                 .map(ItemMapper::mapToItemDto)
                 .toList();
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<ItemDto> search(String query) {
         if (query.isBlank()) {
             log.info("Передана пустая строка для поиска");
@@ -98,7 +105,7 @@ public class ItemServiceImpl implements ItemService {
     private boolean isOwnerValid(Integer userId, Integer itemId) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
-        Item item = itemRepository.findItemById(itemId)
+        Item item = itemRepository.findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + itemId));
 
         return item.getOwnerId().equals(owner.getId());

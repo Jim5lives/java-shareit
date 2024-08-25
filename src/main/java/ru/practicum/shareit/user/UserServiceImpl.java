@@ -15,7 +15,6 @@ import ru.practicum.shareit.user.model.User;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
@@ -45,6 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public UserDto findUserById(Integer id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + id));
