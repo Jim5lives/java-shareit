@@ -7,14 +7,19 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.NewBookingRequest;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.error.exceptions.AccessForbiddenException;
+import ru.practicum.shareit.error.exceptions.BadRequestException;
 import ru.practicum.shareit.error.exceptions.BookingNotValidException;
 import ru.practicum.shareit.error.exceptions.NotFoundException;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -27,8 +32,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto createBooking(Integer bookerId, NewBookingRequest request) {
-        User booker = userRepository.findById(bookerId)
-                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + bookerId));
+        User booker = findUserById(bookerId);
         Item item = itemRepository.findById(request.getItemId())
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь с id=" + request.getItemId()));
 
@@ -49,8 +53,7 @@ public class BookingServiceImpl implements BookingService {
     public BookingDto approveBooking(Integer ownerId, Integer bookingId, Boolean approved) {
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new AccessForbiddenException("Не найден пользователь с id =" + ownerId));
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new NotFoundException("Не найдено бронирование с id =" + bookingId));
+        Booking booking = findBookingById(bookingId);
 
         if (!owner.getId().equals(booking.getItem().getOwnerId())) {
             throw new AccessForbiddenException("Нет прав для обработки бронирования у пользователя с id=" + ownerId);
@@ -63,5 +66,82 @@ public class BookingServiceImpl implements BookingService {
 
         bookingRepository.save(booking);
         return BookingMapper.mapToBookingDto(booking);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public BookingDto findBookingById(Integer userId, Integer bookingId) {
+        User user = findUserById(userId);
+        Booking booking = findBookingById(bookingId);
+        if (user.getId().equals(booking.getBooker().getId()) || user.getId().equals(booking.getItem().getOwnerId())) {
+            return BookingMapper.mapToBookingDto(booking);
+        } else {
+            throw new AccessForbiddenException("Нет прав для просмотра бронирования");
+        }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookingDto> getAllUsersBookings(Integer bookerId, String state) {
+        User booker = findUserById(bookerId);
+        BookingState bookingState = validateBookingState(state);
+
+        return switch (bookingState) {
+            case ALL -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByBookerIdOrderByStartDesc(bookerId));
+            case PAST -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByBookerIdAndEndBeforeOrderByStartDesc(booker.getId(), LocalDateTime.now()));
+            case CURRENT -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.APPROVED));
+            case FUTURE -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByBookerIdAndStartAfter(bookerId, LocalDateTime.now()));
+            case WAITING -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.WAITING));
+            case REJECTED -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.REJECTED));
+        };
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<BookingDto> getAllOwnerBookings(Integer ownerId, String state) {
+        User owner = findUserById(ownerId);
+        BookingState bookingState = validateBookingState(state);
+
+        return switch (bookingState) {
+            case ALL -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByItemOwnerIdOrderByStartDesc(owner.getId()));
+            case PAST -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now()));
+            case CURRENT -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.APPROVED));
+            case FUTURE -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByItemOwnerIdAndStartAfter(ownerId, LocalDateTime.now()));
+            case WAITING -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.WAITING));
+            case REJECTED -> BookingMapper.mapToListBookingDto(
+                    bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED));
+        };
+
+    }
+
+    private Booking findBookingById(Integer bookingId) {
+        return bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Не найдено бронирование с id =" + bookingId));
+    }
+
+    private User findUserById(Integer userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + userId));
+    }
+
+    private BookingState validateBookingState(String state) {
+        BookingState bookingState;
+        try {
+            bookingState = BookingState.valueOf(state.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Неподдерживаемый формат state: " + state);
+        }
+        return bookingState;
     }
 }

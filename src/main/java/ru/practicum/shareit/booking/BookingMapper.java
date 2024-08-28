@@ -11,6 +11,8 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
 
@@ -33,5 +35,11 @@ public class BookingMapper {
                 .booker(UserMapper.mapToUserDto(booking.getBooker()))
                 .status(booking.getStatus())
                 .build();
+    }
+
+    public static List<BookingDto> mapToListBookingDto(List<Booking> bookingList) {
+        return bookingList.stream()
+                .map(BookingMapper::mapToBookingDto)
+                .toList();
     }
 }
