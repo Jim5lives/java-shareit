@@ -6,12 +6,10 @@ import lombok.Data;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 @Data
 @Entity
-@Builder
 @Table(name = "bookings")
 public class Booking {
     @Id

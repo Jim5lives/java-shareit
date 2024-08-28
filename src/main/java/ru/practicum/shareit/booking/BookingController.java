@@ -20,4 +20,12 @@ public class BookingController {
         log.info("Получен запрос на создание бронирования {}", request);
         return bookingService.createBooking(bookerId, request);
     }
+
+    @PatchMapping("/{bookingId}")
+    public BookingDto approveBooking(@RequestHeader("X-Sharer-User-Id") Integer ownerId,
+                                     @PathVariable Integer bookingId,
+                                     @RequestParam Boolean approved) {
+        log.info("Получен запрос на подтверждение/отклонение бронирования вещи с id={}", bookingId);
+        return bookingService.approveBooking(ownerId, bookingId, approved);
+    }
 }
