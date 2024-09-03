@@ -145,6 +145,7 @@ public class ItemServiceImpl implements ItemService {
         }
 
         Comment comment = commentRepository.save(CommentMapper.mapToComment(request, user, item));
+        log.info("Комментарий {} успешно добавлен", request.getText());
         return CommentMapper.mapToCommentDto(comment);
     }
 

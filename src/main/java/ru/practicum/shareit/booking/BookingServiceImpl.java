@@ -46,6 +46,7 @@ public class BookingServiceImpl implements BookingService {
 
         Booking booking = BookingMapper.mapToBooking(request, booker, item);
         booking = bookingRepository.save(booking);
+        log.info("Создан запрос на бронирование вещи {} от пользователя с id={}", item, bookerId);
         return BookingMapper.mapToBookingDto(booking);
     }
 
@@ -66,6 +67,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         bookingRepository.save(booking);
+        log.info("Бронирование с id={} подтверждено владельцем вещи", bookingId);
         return BookingMapper.mapToBookingDto(booking);
     }
 
@@ -75,6 +77,7 @@ public class BookingServiceImpl implements BookingService {
         User user = findUserById(userId);
         Booking booking = findBookingById(bookingId);
         if (user.getId().equals(booking.getBooker().getId()) || user.getId().equals(booking.getItem().getOwnerId())) {
+            log.info("Бронирование с id={} найдено", bookingId);
             return BookingMapper.mapToBookingDto(booking);
         } else {
             throw new AccessForbiddenException("Нет прав для просмотра бронирования");
@@ -140,6 +143,7 @@ public class BookingServiceImpl implements BookingService {
         BookingState bookingState;
         try {
             bookingState = BookingState.valueOf(state.toUpperCase());
+            log.debug("Статус бронирования корректен: {}", bookingState);
         } catch (IllegalArgumentException e) {
             throw new BadRequestException("Неподдерживаемый формат state: " + state);
         }
