@@ -5,7 +5,7 @@ import lombok.*;
 import ru.practicum.shareit.request.model.ItemRequest;
 
 @Entity
-@Table(name = "items")
+@Table(name = "item")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter

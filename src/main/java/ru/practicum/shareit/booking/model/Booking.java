@@ -10,7 +10,7 @@ import java.util.Objects;
 
 
 @Entity
-@Table(name = "bookings")
+@Table(name = "booking")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

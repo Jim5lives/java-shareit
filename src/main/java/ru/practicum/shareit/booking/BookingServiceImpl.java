@@ -53,21 +53,19 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public BookingDto approveBooking(Integer ownerId, Integer bookingId, Boolean approved) {
-        User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new AccessForbiddenException("Не найден пользователь с id =" + ownerId));
-        Booking booking = findBookingById(bookingId);
+        Booking booking = bookingRepository.findByIdAndItemOwnerId(bookingId, ownerId)
+                .orElseThrow(() -> new AccessForbiddenException(
+                        "Не найдено бронирование с id = " + bookingId + "у пользователя с id = " + ownerId));
 
-        if (!owner.getId().equals(booking.getItem().getOwnerId())) {
-            throw new AccessForbiddenException("Нет прав для обработки бронирования у пользователя с id=" + ownerId);
-        }
         if (Boolean.TRUE.equals(approved)) {
             booking.setStatus(BookingStatus.APPROVED);
+            log.info("Бронирование с id={} подтверждено владельцем вещи", bookingId);
         } else {
             booking.setStatus(BookingStatus.REJECTED);
+            log.info("Бронирование с id={} отклонено владельцем вещи", bookingId);
         }
 
         bookingRepository.save(booking);
-        log.info("Бронирование с id={} подтверждено владельцем вещи", bookingId);
         return BookingMapper.mapToBookingDto(booking);
     }
 

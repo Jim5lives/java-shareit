@@ -15,6 +15,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
+    //TODO add MapStruct
 
     public static Booking mapToBooking(NewBookingRequest request, User user, Item item) {
         Booking booking = new Booking();

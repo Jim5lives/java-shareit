@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommentMapper {
+    //TODO add MapStruct
 
     public static Comment mapToComment(NewCommentRequest request, User user, Item item) {
         Comment comment = new Comment();

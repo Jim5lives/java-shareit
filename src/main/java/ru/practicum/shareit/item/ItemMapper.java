@@ -13,6 +13,7 @@ import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
+    //TODO add MapStruct
 
     public static Item mapToItem(NewItemRequest request) {
         Item item = new Item();

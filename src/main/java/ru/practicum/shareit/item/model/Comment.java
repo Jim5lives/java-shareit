@@ -8,7 +8,7 @@ import ru.practicum.shareit.user.model.User;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "comments")
+@Table(name = "comment")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
