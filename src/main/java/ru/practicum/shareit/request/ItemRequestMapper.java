@@ -7,6 +7,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemRequestMapper {
+    //TODO add MapStruct
 
     public static ItemRequest mapToItemRequest(ItemRequestDto dto) {
         ItemRequest itemRequest = new ItemRequest();

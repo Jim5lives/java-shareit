@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.validation.annotation.Validated;
-import ru.practicum.shareit.request.dto.ItemRequestDto;
 
 @Data
 @Validated
@@ -16,5 +15,5 @@ public class NewItemRequest {
     @NotNull
     private Boolean available;
     private Integer ownerId;
-    private ItemRequestDto request;
+    private Integer requestId;
 }

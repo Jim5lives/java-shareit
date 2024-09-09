@@ -8,6 +8,7 @@ import ru.practicum.shareit.user.model.User;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
+    //TODO add MapStruct
 
     public static User mapToUser(NewUserRequest request) {
         User user = new User();
