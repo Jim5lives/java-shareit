@@ -21,7 +21,7 @@ public class ItemRequest {
     @ManyToOne
     @JoinColumn(name = "requestor_id")
     private User requestor;
-    private LocalDateTime created = LocalDateTime.now();
+    private LocalDateTime created;
 
     @Override
     public boolean equals(Object o) {

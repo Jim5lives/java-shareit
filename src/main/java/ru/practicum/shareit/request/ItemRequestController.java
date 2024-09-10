@@ -1,9 +1,19 @@
 package ru.practicum.shareit.request;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.request.dto.ItemRequestDto;
+import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 
 @RestController
 @RequestMapping(path = "/requests")
+@RequiredArgsConstructor
 public class ItemRequestController {
+    private final ItemRequestService itemRequestService;
+
+    @PostMapping
+    public ItemRequestDto createRequest(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                        @RequestBody NewItemRequestRequest request) {
+        return itemRequestService.createRequest(userId, request);
+    }
 }
