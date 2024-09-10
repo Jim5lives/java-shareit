@@ -8,6 +8,7 @@ import ru.practicum.shareit.item.dto.ItemCommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.NewItemRequest;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
 
@@ -20,6 +21,15 @@ public class ItemMapper {
         item.setName(request.getName());
         item.setDescription(request.getDescription());
         item.setAvailable(request.getAvailable());
+        return item;
+    }
+
+    public static Item mapToItem(NewItemRequest request, ItemRequest itemRequest) {
+        Item item = new Item();
+        item.setName(request.getName());
+        item.setDescription(request.getDescription());
+        item.setAvailable(request.getAvailable());
+        item.setRequest(itemRequest);
         return item;
     }
 

@@ -35,6 +35,11 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         return ItemRequestMapper.mapToItemRequest(requests);
     }
 
+    @Override
+    public List<ItemRequestDto> getAllUsersRequests(Integer userId) {
+        return List.of();
+    }
+
     private User validateUser(Integer userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + userId));

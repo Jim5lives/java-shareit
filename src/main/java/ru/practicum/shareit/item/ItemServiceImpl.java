@@ -14,6 +14,8 @@ import ru.practicum.shareit.error.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.*;
 import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.ItemRequestRepository;
+import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.user.model.User;
 
@@ -29,19 +31,27 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
+    private final ItemRequestRepository itemRequestRepository;
 
     @Override
     @Transactional
     public ItemDto createItem(Integer userId, NewItemRequest request) {
         User owner = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id=" + userId));
-        Item item = ItemMapper.mapToItem(request);
-        item.setOwnerId(owner.getId());
+        Item item;
+        if (request.getRequestId() == null) {
+            item = createItemWithoutRequest(request, owner);
+        } else {
+            ItemRequest itemRequest = itemRequestRepository.findById(request.getRequestId())
+                    .orElseThrow(() -> new NotFoundException("Не найден запрос с id=" + request.getRequestId()));
+            item = createItemWithRequest(request, owner, itemRequest);
+        }
 
         item = itemRepository.save(item);
         log.info("Вещь успешно создана: {}", item);
         return ItemMapper.mapToItemDto(item);
     }
+
 
     @Override
     @Transactional(readOnly = true)
@@ -197,6 +207,18 @@ public class ItemServiceImpl implements ItemService {
                     .min(Comparator.comparing(BookingDto::getEnd))
                     .orElse(null);
         }
+    }
+
+    private Item createItemWithoutRequest(NewItemRequest request, User owner) {
+        Item item = ItemMapper.mapToItem(request);
+        item.setOwnerId(owner.getId());
+        return item;
+    }
+
+    private Item createItemWithRequest(NewItemRequest request, User owner, ItemRequest itemRequest) {
+        Item item = ItemMapper.mapToItem(request, itemRequest);
+        item.setOwnerId(owner.getId());
+        return item;
     }
 
 }

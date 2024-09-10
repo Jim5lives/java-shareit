@@ -23,4 +23,9 @@ public class ItemRequestController {
     public List<ItemRequestDto> getAllRequests(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         return itemRequestService.getAllRequests(userId);
     }
+
+    @GetMapping()
+    public List<ItemRequestDto> getAllUsersRequests(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+        return itemRequestService.getAllUsersRequests(userId);
+    }
 }
