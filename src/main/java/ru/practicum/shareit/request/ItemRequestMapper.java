@@ -8,6 +8,7 @@ import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemRequestMapper {
@@ -21,13 +22,10 @@ public class ItemRequestMapper {
         return itemRequest;
     }
 
-    public static ItemRequest mapToItemRequest(ItemRequestDto dto) {
-        ItemRequest itemRequest = new ItemRequest();
-        itemRequest.setId(dto.getId());
-        itemRequest.setDescription(dto.getDescription());
-        itemRequest.setCreated(dto.getCreated());
-        itemRequest.setRequestor(dto.getRequestor());
-        return itemRequest;
+    public static List<ItemRequestDto> mapToItemRequest(List<ItemRequest> requests) {
+        return requests.stream()
+                .map(ItemRequestMapper::mapToItemRequestDto)
+                .toList();
     }
 
     public static ItemRequestDto mapToItemRequestDto(ItemRequest itemRequest) {
