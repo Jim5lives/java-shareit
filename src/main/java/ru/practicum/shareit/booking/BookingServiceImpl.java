@@ -28,6 +28,7 @@ public class BookingServiceImpl implements BookingService {
     private final BookingRepository bookingRepository;
     private final UserRepository userRepository;
     private final ItemRepository itemRepository;
+    private final BookingMapper bookingMapper;
 
 
     @Override
@@ -44,10 +45,10 @@ public class BookingServiceImpl implements BookingService {
             throw new BookingNotValidException("Начало времени бронирования должно быть до времени конца бронирования");
         }
 
-        Booking booking = BookingMapper.mapToBooking(request, booker, item);
+        Booking booking = bookingMapper.mapToBooking(request, booker, item);
         booking = bookingRepository.save(booking);
         log.info("Создан запрос на бронирование вещи {} от пользователя с id={}", item, bookerId);
-        return BookingMapper.mapToBookingDto(booking);
+        return bookingMapper.mapToBookingDto(booking);
     }
 
     @Override
@@ -66,7 +67,7 @@ public class BookingServiceImpl implements BookingService {
         }
 
         bookingRepository.save(booking);
-        return BookingMapper.mapToBookingDto(booking);
+        return bookingMapper.mapToBookingDto(booking);
     }
 
     @Override
@@ -76,7 +77,7 @@ public class BookingServiceImpl implements BookingService {
         Booking booking = findBookingById(bookingId);
         if (user.getId().equals(booking.getBooker().getId()) || user.getId().equals(booking.getItem().getOwnerId())) {
             log.info("Бронирование с id={} найдено", bookingId);
-            return BookingMapper.mapToBookingDto(booking);
+            return bookingMapper.mapToBookingDto(booking);
         } else {
             throw new AccessForbiddenException("Нет прав для просмотра бронирования");
         }
@@ -89,17 +90,17 @@ public class BookingServiceImpl implements BookingService {
         BookingState bookingState = validateBookingState(state);
 
         return switch (bookingState) {
-            case ALL -> BookingMapper.mapToListBookingDto(
+            case ALL -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByBookerIdOrderByStartDesc(bookerId));
-            case PAST -> BookingMapper.mapToListBookingDto(
+            case PAST -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByBookerIdAndEndBeforeOrderByStartDesc(booker.getId(), LocalDateTime.now()));
-            case CURRENT -> BookingMapper.mapToListBookingDto(
+            case CURRENT -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.APPROVED));
-            case FUTURE -> BookingMapper.mapToListBookingDto(
+            case FUTURE -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByBookerIdAndStartAfter(bookerId, LocalDateTime.now()));
-            case WAITING -> BookingMapper.mapToListBookingDto(
+            case WAITING -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.WAITING));
-            case REJECTED -> BookingMapper.mapToListBookingDto(
+            case REJECTED -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByBookerIdAndStatusOrderByStartDesc(bookerId, BookingStatus.REJECTED));
         };
     }
@@ -111,17 +112,17 @@ public class BookingServiceImpl implements BookingService {
         BookingState bookingState = validateBookingState(state);
 
         return switch (bookingState) {
-            case ALL -> BookingMapper.mapToListBookingDto(
+            case ALL -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByItemOwnerIdOrderByStartDesc(owner.getId()));
-            case PAST -> BookingMapper.mapToListBookingDto(
+            case PAST -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByItemOwnerIdAndEndBeforeOrderByStartDesc(ownerId, LocalDateTime.now()));
-            case CURRENT -> BookingMapper.mapToListBookingDto(
+            case CURRENT -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.APPROVED));
-            case FUTURE -> BookingMapper.mapToListBookingDto(
+            case FUTURE -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByItemOwnerIdAndStartAfter(ownerId, LocalDateTime.now()));
-            case WAITING -> BookingMapper.mapToListBookingDto(
+            case WAITING -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.WAITING));
-            case REJECTED -> BookingMapper.mapToListBookingDto(
+            case REJECTED -> bookingMapper.mapToListBookingDto(
                     bookingRepository.findByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED));
         };
 

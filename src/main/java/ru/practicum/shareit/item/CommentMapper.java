@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.NewCommentRequest;
 import ru.practicum.shareit.item.model.Comment;
@@ -10,26 +10,15 @@ import ru.practicum.shareit.user.model.User;
 
 import java.time.LocalDateTime;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class CommentMapper {
-    //TODO add MapStruct
+@Mapper(componentModel = "spring", imports = {LocalDateTime.class})
+public interface CommentMapper {
 
-    public static Comment mapToComment(NewCommentRequest request, User user, Item item) {
-        Comment comment = new Comment();
-        comment.setText(request.getText());
-        comment.setItem(item);
-        comment.setAuthor(user);
-        comment.setCreated(LocalDateTime.now());
-        return comment;
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "author", source = "user")
+    @Mapping(target = "created", expression = "java(LocalDateTime.now())")
+    Comment mapToComment(NewCommentRequest request, User user, Item item);
 
-    public static CommentDto mapToCommentDto(Comment comment) {
-        CommentDto dto = new CommentDto();
-        dto.setId(comment.getId());
-        dto.setText(comment.getText());
-        dto.setItemId(comment.getItem().getId());
-        dto.setAuthorName(comment.getAuthor().getName());
-        dto.setCreated(comment.getCreated());
-        return dto;
-    }
+    @Mapping(target = "itemId", source = "comment.item.id")
+    @Mapping(target = "authorName", source = "comment.author.name")
+    CommentDto mapToCommentDto(Comment comment);
 }

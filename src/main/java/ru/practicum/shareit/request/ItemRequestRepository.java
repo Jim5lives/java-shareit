@@ -8,4 +8,6 @@ import java.util.List;
 public interface ItemRequestRepository extends JpaRepository<ItemRequest, Integer> {
 
     List<ItemRequest> findByRequestorIdNot(Integer requestorId);
+
+    List<ItemRequest> findByRequestorId(Integer requestorId);
 }

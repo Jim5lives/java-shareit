@@ -32,6 +32,9 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
     private final ItemRequestRepository itemRequestRepository;
+    private final ItemMapper itemMapper;
+    private final BookingMapper bookingMapper;
+    private final CommentMapper commentMapper;
 
     @Override
     @Transactional
@@ -49,7 +52,7 @@ public class ItemServiceImpl implements ItemService {
 
         item = itemRepository.save(item);
         log.info("Вещь успешно создана: {}", item);
-        return ItemMapper.mapToItemDto(item);
+        return itemMapper.mapToItemDto(item);
     }
 
 
@@ -62,13 +65,13 @@ public class ItemServiceImpl implements ItemService {
         BookingDto nextBooking = null;
         if (item.getOwnerId().equals(userId)) {
             List<BookingDto> bookings = bookingRepository.findByItemId(id).stream()
-                    .map(BookingMapper::mapToBookingDto)
+                    .map(bookingMapper::mapToBookingDto)
                     .toList();
             lastBooking = findLast(bookings);
             nextBooking = findNext(bookings);
         }
         log.info("Вещь найдена по id={}: {}", id, item);
-        return ItemMapper.mapToItemAllDto(item, lastBooking, nextBooking, findComments(id));
+        return itemMapper.mapToItemCommentDto(item, lastBooking, nextBooking, findComments(id));
     }
 
     @Override
@@ -82,7 +85,7 @@ public class ItemServiceImpl implements ItemService {
             Item itemToUpdate = updateItemFields(item, request);
             Item updatedItem = itemRepository.save(itemToUpdate);
             log.info("Вещь успешно обновлена: {}", updatedItem);
-            return ItemMapper.mapToItemDto(updatedItem);
+            return itemMapper.mapToItemDto(updatedItem);
 
         } else {
             log.warn("Не совпадают userId={} и ownerId={} вещи для обновления", userId, item.getOwnerId());
@@ -111,14 +114,14 @@ public class ItemServiceImpl implements ItemService {
 
         Map<Integer, List<BookingDto>> bookingsMap = bookingRepository.findByItemOwnerIdOrderByStartDesc(userId)
                 .stream()
-                .map(BookingMapper::mapToBookingDto)
+                .map(bookingMapper::mapToBookingDto)
                 .collect(Collectors.groupingBy(booking -> booking.getItem().getId()));
 
         log.info("Выводится список вещей пользователя с id={}", owner.getId());
         return itemRepository.findAllByOwnerId(userId).stream()
                 .map(item -> {
                     List<BookingDto> itemBookings = bookingsMap.getOrDefault(item.getId(), Collections.emptyList());
-                    return ItemMapper.mapToItemAllDto(
+                    return itemMapper.mapToItemCommentDto(
                             item,
                             findLast(itemBookings),
                             findNext(itemBookings),
@@ -137,7 +140,7 @@ public class ItemServiceImpl implements ItemService {
 
         log.info("Выводится список вещей, содержащих '{}'", query);
         return itemRepository.search(query).stream()
-                .map(ItemMapper::mapToItemDto)
+                .map(itemMapper::mapToItemDto)
                 .toList();
     }
 
@@ -154,14 +157,14 @@ public class ItemServiceImpl implements ItemService {
             throw new BadRequestException("Нет прав для добавления комментария");
         }
 
-        Comment comment = commentRepository.save(CommentMapper.mapToComment(request, user, item));
+        Comment comment = commentRepository.save(commentMapper.mapToComment(request, user, item));
         log.info("Комментарий {} успешно добавлен", request.getText());
-        return CommentMapper.mapToCommentDto(comment);
+        return commentMapper.mapToCommentDto(comment);
     }
 
     private List<CommentDto> findComments(Integer itemId) {
         return commentRepository.findAllByItemIdOrderByCreated(itemId).stream()
-                .map(CommentMapper::mapToCommentDto)
+                .map(commentMapper::mapToCommentDto)
                 .toList();
     }
 
@@ -210,13 +213,13 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Item createItemWithoutRequest(NewItemRequest request, User owner) {
-        Item item = ItemMapper.mapToItem(request);
+        Item item = itemMapper.mapToItem(request);
         item.setOwnerId(owner.getId());
         return item;
     }
 
     private Item createItemWithRequest(NewItemRequest request, User owner, ItemRequest itemRequest) {
-        Item item = ItemMapper.mapToItem(request, itemRequest);
+        Item item = itemMapper.mapToItem(request, itemRequest);
         item.setOwnerId(owner.getId());
         return item;
     }

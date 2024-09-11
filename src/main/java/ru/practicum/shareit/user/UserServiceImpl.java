@@ -17,15 +17,16 @@ import ru.practicum.shareit.user.model.User;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
     public UserDto createUser(NewUserRequest request) {
         isEmailUnique(request.getEmail());
-        User user = UserMapper.mapToUser(request);
+        User user = userMapper.mapToUser(request);
         User userCreated = userRepository.save(user);
         log.info("Пользователь успешно создан {}", user);
-        return UserMapper.mapToUserDto(userCreated);
+        return userMapper.mapToUserDto(userCreated);
     }
 
     @Override
@@ -40,7 +41,7 @@ public class UserServiceImpl implements UserService {
 
         User updatedUser = userRepository.save(userToUpdate);
         log.info("Пользователь успешно обновлен {}", updatedUser);
-        return UserMapper.mapToUserDto(updatedUser);
+        return userMapper.mapToUserDto(updatedUser);
     }
 
     @Override
@@ -49,7 +50,7 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь с id =" + id));
         log.info("Пользователь с id={} успешно найден: {}", id, user);
-        return UserMapper.mapToUserDto(user);
+        return userMapper.mapToUserDto(user);
     }
 
     @Override

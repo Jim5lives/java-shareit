@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item;
 
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemCommentDto;
@@ -12,52 +12,29 @@ import ru.practicum.shareit.request.model.ItemRequest;
 
 import java.util.List;
 
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class ItemMapper {
-    //TODO add MapStruct
+@Mapper(componentModel = "spring")
+public interface ItemMapper {
 
-    public static Item mapToItem(NewItemRequest request) {
-        Item item = new Item();
-        item.setName(request.getName());
-        item.setDescription(request.getDescription());
-        item.setAvailable(request.getAvailable());
-        return item;
-    }
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "request", ignore = true)
+    Item mapToItem(NewItemRequest request);
 
-    public static Item mapToItem(NewItemRequest request, ItemRequest itemRequest) {
-        Item item = new Item();
-        item.setName(request.getName());
-        item.setDescription(request.getDescription());
-        item.setAvailable(request.getAvailable());
-        item.setRequest(itemRequest);
-        return item;
-    }
+    @Mapping(target = "request", source = "itemRequest")
+    @Mapping(target = "description", source = "request.description")
+    Item mapToItem(NewItemRequest request, ItemRequest itemRequest);
 
-    public static ItemDto mapToItemDto(Item item) {
-        ItemDto dto = new ItemDto();
-        dto.setId(item.getId());
-        dto.setName(item.getName());
-        dto.setDescription(item.getDescription());
-        dto.setAvailable(item.getAvailable());
-        dto.setOwnerId(item.getOwnerId());
-        if (item.getRequest() != null) {
-            dto.setRequestId(item.getRequest().getId());
-        }
-        return dto;
-    }
+    @Mapping(target = "requestId", source = "item.request.id")
+    ItemDto mapToItemDto(Item item);
 
-    public static ItemCommentDto mapToItemAllDto(Item item, BookingDto lastBooking,
-                                                 BookingDto nextBooking, List<CommentDto> commentsDto) {
-        ItemCommentDto allDto = new ItemCommentDto();
-        allDto.setId(item.getId());
-        allDto.setName(item.getName());
-        allDto.setDescription(item.getDescription());
-        allDto.setAvailable(item.getAvailable());
-        allDto.setOwnerId(item.getOwnerId());
-        allDto.setRequestId(item.getRequest() != null ? item.getRequest().getId() : null);
-        allDto.setLastBooking(lastBooking);
-        allDto.setNextBooking(nextBooking);
-        allDto.setComments(commentsDto);
-        return allDto;
-    }
+    @Mapping(target = "id", source = "item.id")
+    @Mapping(target = "name", source = "item.name")
+    @Mapping(target = "description", source = "item.description")
+    @Mapping(target = "available", source = "item.available")
+    @Mapping(target = "ownerId", source = "item.ownerId")
+    @Mapping(target = "requestId", source = "item.request.id")
+    @Mapping(target = "lastBooking", source = "lastBooking")
+    @Mapping(target = "nextBooking", source = "nextBooking")
+    @Mapping(target = "comments", source = "commentsDto")
+    ItemCommentDto mapToItemCommentDto(Item item, BookingDto lastBooking, BookingDto nextBooking,
+                                       List<CommentDto> commentsDto);
 }
