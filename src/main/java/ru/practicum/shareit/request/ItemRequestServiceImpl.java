@@ -1,6 +1,7 @@
 package ru.practicum.shareit.request;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.error.exceptions.NotFoundException;
@@ -16,6 +17,7 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ItemRequestServiceImpl implements ItemRequestService {
@@ -31,6 +33,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         User user = validateUser(userId);
         ItemRequest itemRequest = itemRequestMapper.mapToItemRequest(request, user);
         itemRequest = itemRequestRepository.save(itemRequest);
+        log.info("Запрос вещи успешно сохранен: {}", itemRequest);
         return itemRequestMapper.mapToItemRequestDto(itemRequest);
     }
 
@@ -39,6 +42,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestDto> getAllRequests(Integer userId) {
         validateUser(userId);
         List<ItemRequest> requests = itemRequestRepository.findByRequestorIdNot(userId);
+        log.info("Выводятся все запросы пользователей, кроме userId={}", userId);
         return itemRequestMapper.mapToItemRequestDto(requests);
     }
 
@@ -50,6 +54,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .toList();
         ItemRequest itemRequest = itemRequestRepository.findById(requestId)
                 .orElseThrow(() -> new NotFoundException("Не найден запрос с id =" + requestId));
+        log.info("Выводится запрос с id={}", requestId);
         return itemRequestMapper.mapToItemRequestWithResponseDto(itemRequest, items);
     }
 
@@ -57,7 +62,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     public List<ItemRequestWithResponseDto> getAllUsersRequests(Integer userId) {
         validateUser(userId);
         List<ItemRequest> requests = itemRequestRepository.findByRequestorId(userId);
-
+        log.info("Выводятся все запросы вещей пользователя с id={}", userId);
         return requests.stream()
                 .map(ItemRequest::getId)
                 .map(id -> getRequestById(userId, id))
