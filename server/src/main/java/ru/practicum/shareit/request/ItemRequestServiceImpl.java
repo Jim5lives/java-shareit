@@ -12,7 +12,9 @@ import ru.practicum.shareit.request.dto.ItemRequestDto;
 import ru.practicum.shareit.request.dto.ItemRequestWithResponseDto;
 import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.user.UserMapper;
 import ru.practicum.shareit.user.UserRepository;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
@@ -26,11 +28,12 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     private final ItemRepository itemRepository;
     private final ItemRequestMapper itemRequestMapper;
     private final ItemMapper itemMapper;
+    private final UserMapper userMapper;
 
     @Override
     @Transactional
     public ItemRequestDto createRequest(Integer userId, NewItemRequestRequest request) {
-        User user = validateUser(userId);
+        UserDto user = userMapper.mapToUserDto(validateUser(userId));
         ItemRequest itemRequest = itemRequestMapper.mapToItemRequest(request, user);
         itemRequest = itemRequestRepository.save(itemRequest);
         log.info("Запрос вещи успешно сохранен: {}", itemRequest);
