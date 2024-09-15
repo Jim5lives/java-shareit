@@ -55,7 +55,7 @@ class ItemControllerTest {
         itemCommentDto.setDescription("description");
         itemCommentDto.setAvailable(true);
         itemCommentDto.setOwnerId(1);
-        
+
         commentDto = new CommentDto();
         commentDto.setId(1);
         commentDto.setText("comment");

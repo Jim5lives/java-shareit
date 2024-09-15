@@ -47,7 +47,7 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldUpdateUser() {
-        UserDto oldUser = makeUserDto( "oldEmail@gmail.com", "oldName");
+        UserDto oldUser = makeUserDto("oldEmail@gmail.com", "oldName");
         String email = "updatedEmail@gmail.com";
         String name = "updatedName";
         UpdateUserRequest request = makeUpdateUserRequest(email, name);

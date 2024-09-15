@@ -48,7 +48,7 @@ class ItemRequestControllerTest {
         itemDto.setName("name");
         itemDto.setDescription("description");
         itemDto.setAvailable(true);
-        
+
         itemRequestDto = new ItemRequestDto();
         itemRequestDto.setId(1);
         itemRequestDto.setDescription("description");
