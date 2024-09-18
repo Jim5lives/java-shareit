@@ -9,7 +9,7 @@ import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestWithResponseDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithItemsDto;
 import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserMapper;
@@ -50,7 +50,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestWithResponseDto getRequestById(Integer userId, Integer requestId) {
+    public ItemRequestWithItemsDto getRequestById(Integer userId, Integer requestId) {
         validateUser(userId);
         List<ItemDto> items = itemRepository.findByRequestId(requestId).stream()
                 .map(itemMapper::mapToItemDto)
@@ -62,7 +62,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestWithResponseDto> getAllUsersRequests(Integer userId) {
+    public List<ItemRequestWithItemsDto> getAllUsersRequests(Integer userId) {
         validateUser(userId);
         List<ItemRequest> requests = itemRequestRepository.findByRequestorId(userId);
         log.info("Выводятся все запросы вещей пользователя с id={}", userId);

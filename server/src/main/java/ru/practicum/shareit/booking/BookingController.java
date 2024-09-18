@@ -40,7 +40,7 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> getAllUsersBookings(@RequestHeader("X-Sharer-User-Id") Integer bookerId,
-                                          @RequestParam(defaultValue = "ALL") String state) {
+                                                @RequestParam(defaultValue = "ALL") String state) {
         log.info("Получен запрос на вывод всех бронирований пользователя с id={}", bookerId);
         return bookingService.getAllUsersBookings(bookerId, state);
     }

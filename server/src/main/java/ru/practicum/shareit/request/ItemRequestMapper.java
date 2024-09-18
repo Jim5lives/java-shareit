@@ -3,7 +3,7 @@ package ru.practicum.shareit.request;
 import org.mapstruct.Mapper;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestWithResponseDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithItemsDto;
 import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -26,7 +26,7 @@ public interface ItemRequestMapper {
     ItemRequestDto mapToItemRequestDto(ItemRequest itemRequest);
 
     @Mapping(target = "items", source = "items")
-    ItemRequestWithResponseDto mapToItemRequestWithResponseDto(ItemRequest itemRequest,
-                                                               List<ItemDto> items);
+    ItemRequestWithItemsDto mapToItemRequestWithResponseDto(ItemRequest itemRequest,
+                                                            List<ItemDto> items);
 }
 

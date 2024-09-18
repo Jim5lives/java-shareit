@@ -9,7 +9,7 @@ import ru.practicum.shareit.error.exceptions.NotFoundException;
 import ru.practicum.shareit.item.ItemMapperImpl;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestWithResponseDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithItemsDto;
 import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 import ru.practicum.shareit.request.model.ItemRequest;
 import ru.practicum.shareit.user.UserMapperImpl;
@@ -83,7 +83,7 @@ public class ItemRequestServiceTest {
         when(itemRequestRepository.findById(anyInt()))
                 .thenReturn(Optional.of(itemRequest));
 
-        ItemRequestWithResponseDto actual = itemRequestService.getRequestById(1, 1);
+        ItemRequestWithItemsDto actual = itemRequestService.getRequestById(1, 1);
 
         assertNotNull(actual);
         assertNotNull(actual.getId());
@@ -117,7 +117,7 @@ public class ItemRequestServiceTest {
         when(itemRequestRepository.findById(2))
                 .thenReturn(Optional.of(itemRequest2));
 
-        List<ItemRequestWithResponseDto> actual = itemRequestService.getAllUsersRequests(1);
+        List<ItemRequestWithItemsDto> actual = itemRequestService.getAllUsersRequests(1);
 
         assertNotNull(actual);
         assertEquals(2, actual.size());

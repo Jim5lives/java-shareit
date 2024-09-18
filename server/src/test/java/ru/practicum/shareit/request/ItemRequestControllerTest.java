@@ -11,7 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.error.exceptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestWithResponseDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithItemsDto;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -38,7 +38,7 @@ class ItemRequestControllerTest {
     private MockMvc mvc;
 
     private ItemRequestDto itemRequestDto;
-    private ItemRequestWithResponseDto withResponseDto;
+    private ItemRequestWithItemsDto withResponseDto;
     private final String header = "X-Sharer-User-Id";
 
     @BeforeEach
@@ -55,7 +55,7 @@ class ItemRequestControllerTest {
         itemRequestDto.setCreated(LocalDateTime.now());
         itemRequestDto.setRequestor(null);
 
-        withResponseDto = new ItemRequestWithResponseDto();
+        withResponseDto = new ItemRequestWithItemsDto();
         withResponseDto.setId(1);
         withResponseDto.setDescription("description");
         withResponseDto.setCreated(LocalDateTime.now());

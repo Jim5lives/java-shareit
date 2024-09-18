@@ -1,11 +1,10 @@
 package ru.practicum.shareit.request;
 
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
-import ru.practicum.shareit.request.dto.ItemRequestWithResponseDto;
+import ru.practicum.shareit.request.dto.ItemRequestWithItemsDto;
 import ru.practicum.shareit.request.dto.NewItemRequestRequest;
 
 import java.util.List;
@@ -19,7 +18,7 @@ public class ItemRequestController {
 
     @PostMapping
     public ItemRequestDto createRequest(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                        @Valid @RequestBody NewItemRequestRequest request) {
+                                        @RequestBody NewItemRequestRequest request) {
         log.info("Получен запрос на добавление запроса вещи {}", request);
         return itemRequestService.createRequest(userId, request);
     }
@@ -31,14 +30,14 @@ public class ItemRequestController {
     }
 
     @GetMapping("/{requestId}")
-    public ItemRequestWithResponseDto getRequestById(@RequestHeader("X-Sharer-User-Id") Integer userId,
-                                                     @PathVariable Integer requestId) {
+    public ItemRequestWithItemsDto getRequestById(@RequestHeader("X-Sharer-User-Id") Integer userId,
+                                                  @PathVariable Integer requestId) {
         log.info("Получен запрос на вывод запроса вещи с id={}", requestId);
         return itemRequestService.getRequestById(userId, requestId);
     }
 
     @GetMapping
-    public List<ItemRequestWithResponseDto> getAllUsersRequests(@RequestHeader("X-Sharer-User-Id") Integer userId) {
+    public List<ItemRequestWithItemsDto> getAllUsersRequests(@RequestHeader("X-Sharer-User-Id") Integer userId) {
         log.info("Получен запрос на всех запросов пользователя с id={}", userId);
         return itemRequestService.getAllUsersRequests(userId);
     }
